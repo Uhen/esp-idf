@@ -124,6 +124,7 @@ extern tBLUFI_ENV *blufi_env_ptr;
 #define BLUFI_TYPE_DATA_SUBTYPE_WIFI_LIST               0x11
 #define BLUFI_TYPE_DATA_SUBTYPE_ERROR_INFO              0x12
 #define BLUFI_TYPE_DATA_SUBTYPE_CUSTOM_DATA             0x13
+#define BLUFI_TYPE_DATA_SUBTYPE_CUSTOM_DATA_LAST        0x3f    // all remaining data types are custom
 #define BLUFI_TYPE_IS_CTRL(type)        (BLUFI_GET_TYPE((type)) == BLUFI_TYPE_CTRL)
 #define BLUFI_TYPE_IS_DATA(type)        (BLUFI_GET_TYPE((type)) == BLUFI_TYPE_DATA)
 

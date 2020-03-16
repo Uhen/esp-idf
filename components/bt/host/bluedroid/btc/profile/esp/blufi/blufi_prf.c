@@ -765,15 +765,13 @@ void btc_blufi_cb_deep_copy(btc_msg_t *msg, void *p_dest, void *p_src)
         }
         memcpy(dst->server_pkey.pkey, src->server_pkey.pkey, src->server_pkey.pkey_len);
         break;
-    case ESP_BLUFI_EVENT_RECV_CUSTOM_DATA:
-         dst->custom_data.data = osi_malloc(src->custom_data.data_len);
+    default:        // Handle all ESP_BLUFI_EVENT_RECV_CUSTOM_DATA types
+        dst->custom_data.data = osi_malloc(src->custom_data.data_len);
         if (dst->custom_data.data == NULL) {
             BTC_TRACE_ERROR("%s %d no mem\n", __func__, msg->act);
             break;
         }
         memcpy(dst->custom_data.data, src->custom_data.data, src->custom_data.data_len);
-        break;
-    default:
         break;
     }
 }
@@ -813,10 +811,8 @@ void btc_blufi_cb_deep_free(btc_msg_t *msg)
     case ESP_BLUFI_EVENT_RECV_SERVER_PRIV_KEY:
         osi_free(param->server_pkey.pkey);
         break;
-    case ESP_BLUFI_EVENT_RECV_CUSTOM_DATA:
+    default:    // Handle all ESP_BLUFI_EVENT_RECV_CUSTOM_DATA types
         osi_free(param->custom_data.data);
-        break;
-    default:
         break;
     }
 }
@@ -906,11 +902,8 @@ void btc_blufi_cb_handler(btc_msg_t *msg)
     case ESP_BLUFI_EVENT_REPORT_ERROR:
         btc_blufi_cb_to_app(ESP_BLUFI_EVENT_REPORT_ERROR, param);
         break;
-    case ESP_BLUFI_EVENT_RECV_CUSTOM_DATA:
-        btc_blufi_cb_to_app(ESP_BLUFI_EVENT_RECV_CUSTOM_DATA, param);
-        break;
-    default:
-        BTC_TRACE_ERROR("%s UNKNOWN %d\n", __func__, msg->act);
+    default:    // handle all ESP_BLUFI_EVENT_RECV_CUSTOM_DATA types
+        btc_blufi_cb_to_app(msg->act, param);
         break;
     }
 
