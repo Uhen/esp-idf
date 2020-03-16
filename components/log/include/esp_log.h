@@ -285,10 +285,17 @@ void esp_log_writev(esp_log_level_t level, const char* tag, const char* format, 
 /// macro to output logs in startup code at ``ESP_LOG_VERBOSE`` level.  @see ``ESP_EARLY_LOGE``,``ESP_LOGE``, ``printf``
 #define ESP_EARLY_LOGV( tag, format, ... ) ESP_LOG_EARLY_IMPL(tag, format, ESP_LOG_VERBOSE, V, ##__VA_ARGS__)
 
+#ifndef CONFIG_LOG_DEFAULT_LEVEL_NONE 
 #define ESP_LOG_EARLY_IMPL(tag, format, log_level, log_tag_letter, ...) do {                         \
         if (LOG_LOCAL_LEVEL >= log_level) {                                                          \
             ets_printf(LOG_FORMAT(log_tag_letter, format), esp_log_timestamp(), tag, ##__VA_ARGS__); \
         }} while(0)
+#else
+#define ESP_LOG_EARLY_IMPL(tag, format, log_level, log_tag_letter, ...) do {                         \
+        if (LOG_LOCAL_LEVEL >= log_level) {                                                          \
+            ets_printf(tag, ##__VA_ARGS__); \
+        }} while(0)
+#endif
 
 #ifndef BOOTLOADER_BUILD
 #define ESP_LOGE( tag, format, ... ) ESP_LOG_LEVEL_LOCAL(ESP_LOG_ERROR,   tag, format, ##__VA_ARGS__)
@@ -347,8 +354,8 @@ void esp_log_writev(esp_log_level_t level, const char* tag, const char* format, 
  * @see ``printf``, ``ESP_LOG_LEVEL``
  */
 #define ESP_LOG_LEVEL_LOCAL(level, tag, format, ...) do {               \
-        if ( LOG_LOCAL_LEVEL >= level ) ESP_LOG_LEVEL(level, tag, format, ##__VA_ARGS__); \
-    } while(0)
+        if ( level != ESP_LOG_NONE && LOG_LOCAL_LEVEL >= level ) ESP_LOG_LEVEL(level, tag, format, ##__VA_ARGS__); \
+	} while(0)
 
 #ifdef __cplusplus
 }

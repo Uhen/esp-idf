@@ -34,7 +34,7 @@
 #ifdef CONFIG_BT_STACK_NO_LOG
 #define UC_BT_STACK_NO_LOG               CONFIG_BT_STACK_NO_LOG
 #else
-#define UC_BT_STACK_NO_LOG               FALSE
+#define UC_BT_STACK_NO_LOG               TRUE
 #endif
 
 /**********************************************************
