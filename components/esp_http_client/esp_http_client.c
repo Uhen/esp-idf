@@ -31,6 +31,32 @@
 #include "esp_transport_ssl.h"
 #endif
 
+
+/**
+ * Transport layer structure, which will provide functions, basic properties for transport types
+ */
+struct esp_transport_item_t {
+    int             port;
+    int             socket;         /*!< Socket to use in this transport */
+    char            *scheme;        /*!< Tag name */
+    void            *context;       /*!< Context data */
+    void            *data;          /*!< Additional transport data */
+    connect_func    _connect;       /*!< Connect function of this transport */
+    io_read_func    _read;          /*!< Read */
+    io_func         _write;         /*!< Write */
+    trans_func      _close;         /*!< Close */
+    poll_func       _poll_read;     /*!< Poll and read */
+    poll_func       _poll_write;    /*!< Poll and write */
+    trans_func      _destroy;       /*!< Destroy and free transport */
+    connect_async_func _connect_async;      /*!< non-blocking connect function of this transport */
+    payload_transfer_func  _parent_transfer;        /*!< Function returning underlying transport layer */
+    esp_tls_error_handle_t     error_handle;            /*!< Pointer to esp-tls error handle */
+
+    STAILQ_ENTRY(esp_transport_item_t) next;
+};
+
+STAILQ_HEAD(esp_transport_list_t, esp_transport_item_t);
+
 static const char *TAG = "HTTP_CLIENT";
 
 /**
@@ -992,6 +1018,8 @@ int esp_http_client_fetch_headers(esp_http_client_handle_t client)
     return client->response->content_length;
 }
 
+esp_http_client_t clientTrace;
+struct esp_transport_item_t transportTrace;
 static esp_err_t esp_http_client_connect(esp_http_client_handle_t client)
 {
     esp_err_t err;
@@ -1019,6 +1047,10 @@ static esp_err_t esp_http_client_connect(esp_http_client_handle_t client)
 #endif
             return ESP_ERR_HTTP_INVALID_TRANSPORT;
         }
+
+        clientTrace = *client;
+        transportTrace = *(clientTrace.transport);
+
         if (!client->is_async) {
             if (esp_transport_connect(client->transport, client->connection_info.host, client->connection_info.port, client->timeout_ms) < 0) {
                 ESP_LOGE(TAG, "Connection failed, sock < 0");
