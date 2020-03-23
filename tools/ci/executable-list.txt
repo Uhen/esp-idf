@@ -45,6 +45,7 @@ tools/ci/check_idf_version.sh
 tools/ci/check_public_headers.sh
 tools/ci/check_ut_cmake_make.sh
 tools/ci/checkout_project_ref.py
+tools/ci/deploy_docs.py
 tools/ci/envsubst.py
 tools/ci/fix_empty_prototypes.sh
 tools/ci/get-full-sources.sh
@@ -62,7 +63,6 @@ tools/docker/hooks/build
 tools/esp_app_trace/logtrace_proc.py
 tools/esp_app_trace/sysviewtrace_proc.py
 tools/esp_app_trace/test/logtrace/test.sh
-tools/esp_app_trace/test/sysview/compare_json.py
 tools/esp_app_trace/test/sysview/test.sh
 tools/find_apps.py
 tools/format.sh
